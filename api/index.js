@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookies());
 app.use(cors({
-  origin: ["https://dictionary-exp-frontend.vercel.app/"],
+  origin: ["https://dictionary-exp-frontend.vercel.app"],
   methods: ["POST", "GET"],
   credentials: true
 }));
