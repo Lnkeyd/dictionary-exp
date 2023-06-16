@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const userRoute = require("./routes/user")
+
 const authRoute = require("./routes/auth")
 const dictRoute = require("./routes/dictionary")
 const statRoute = require("./routes/stat")
@@ -35,7 +35,7 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use('/api/login', authRoute)
-app.use('/api/user', userRoute)
+
 app.use('/api/dict', checkAuth, dictRoute)
 app.use('/api/stat', checkAuth, statRoute)
 
