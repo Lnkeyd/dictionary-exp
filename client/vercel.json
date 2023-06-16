@@ -1,0 +1,36 @@
+{
+    "rewrites": [
+        {
+          "source": "/api/login",
+          "destination": "https://deploy-dict-exp.vercel.app/api/login"
+        },
+        {
+          "source": "/api/login/",
+          "destination": "https://deploy-dict-exp.vercel.app/api/login/"
+        },
+        {
+            "source": "/api/login/logout",
+            "destination": "https://deploy-dict-exp.vercel.app/api/login/logout"
+          },
+        {
+            "source": "/api/login/logout/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/login/logout/"
+          },
+        {
+            "source": "/api/dict",
+            "destination": "https://deploy-dict-exp.vercel.app/api/dict"
+        },
+        {
+            "source": "/api/dict/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/dict/"
+        },
+        {
+            "source": "/api/stat",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat"
+        },
+        {
+            "source": "/api/stat/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat/"
+        }
+      ]
+}

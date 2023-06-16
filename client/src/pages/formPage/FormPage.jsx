@@ -14,14 +14,6 @@ const FormPage = () => {
   const [success, setSuccess] = useState(false);
   const { user, session } = useSelector((store) => store.user);
 
-  // Слова идут вразнобой
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
-
   useEffect(() => {
     if (!user) {
       Navigate({ to: "/", replace: true });
