@@ -1,0 +1,27 @@
+.page {
+    padding: 0px 24px;
+    .form {
+        margin: 0 auto;
+        width: 270px;
+        .header {
+            text-align: center;
+        }
+        .button {
+            display: block;
+            padding: 6px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+        .error {
+            color: #ff5b5b;
+            text-align: center;
+        }
+        .success {
+            color: #4bed89;
+            text-align: center;
+        }
+    }
+}

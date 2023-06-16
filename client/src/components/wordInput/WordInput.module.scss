@@ -1,0 +1,9 @@
+.container {
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: end;
+    >label {
+        margin-right: 4px;
+        text-align: right;
+    }
+}

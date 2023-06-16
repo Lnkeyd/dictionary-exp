@@ -1,0 +1,19 @@
+{
+  "name": "assossiations-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api/index.js",
+  "scripts": {
+    "server": "cd api/ && npm install && node server.js",
+    "client": "cd client/ && npm install && npm run start",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "deploy": "cd client/ && npm run build && cd ../ && git push heroku main",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.2.0"
+  }
+}
