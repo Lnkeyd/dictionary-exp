@@ -4,8 +4,11 @@ import AuthPage from "./pages/authPage/AuthPage";
 import { useDispatch, useSelector } from "react-redux";
 import FormPage from "./pages/formPage/FormPage";
 import StatPage from "./pages/statPage/StatPage";
+import axios from "axios";
 
 const App = () => {
+  axios.defaults.withCredentials = true
+
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.user);
 
