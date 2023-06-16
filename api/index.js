@@ -21,7 +21,11 @@ dotenv.config({ path: `${__dirname}/../.env` });
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookies());
-app.use(cors());
+app.use(cors({
+  origin: ["https://deploy-dict-exp.vercel.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+}));
 
 mongoose
   .connect(process.env.MONGO_URL, {
