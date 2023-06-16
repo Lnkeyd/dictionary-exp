@@ -38,9 +38,9 @@ const StatPage = () => {
             </tr>
           </thead>
           <tbody>
-            {stat?.length > 0 && stat?.map((item) => (
+            {stat.length > 0 ? stat?.map((item) => (
               <TableItem key={item._id} row={item}/>
-            ))}
+            )): ''}
           </tbody>
         </table>
       </div>
