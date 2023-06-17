@@ -20,7 +20,7 @@ const StatPage = () => {
   const getStat = async () => {
     try {
       const res = await axios.get(`/api/stat/`, {params: {username: user}});
-      setStat(res.data);
+      setStat(JSON.parse(res.data));
       console.log(JSON.parse(res.data));
     } catch (err) {
       console.log(err);
@@ -40,9 +40,9 @@ const StatPage = () => {
             </tr>
           </thead>
           <tbody>
-            {/* {stat.length > 0 ? stat?.map((item) => (
+            {stat.length > 0 ? stat?.map((item) => (
               <TableItem key={item._id} row={item}/>
-            )): ''} */}
+            )): ''}
           </tbody>
         </table>
       </div>
