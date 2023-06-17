@@ -13,24 +13,26 @@ const StatPage = () => {
     getStat();
   }, []);
 
-//   useEffect(() => {
-//     console.log("STAT IS", stat);
-//   }, [stat]);
+  //   useEffect(() => {
+  //     console.log("STAT IS", stat);
+  //   }, [stat]);
 
   const getStat = async () => {
     try {
-      const res = await axios.get(`/api/stat/`, {params: {username: user}});
-      const data = await res.data
-      const sorted = data.sort(function(a, b){
-        var nameA = a.word.toLowerCase(), nameB=b.word.toLowerCase()
-        if (nameA < nameB) //сортируем строки по возрастанию
-          return -1
-        if (nameA > nameB)
-          return 1
-        return 0 // Никакой сортировки
-        })
-      setStat(sorted);
-    //   console.log(data);
+      const res = await axios.get(`/api/stat/`, { params: { username: user } });
+      const data = await res.data;
+      //   sorted
+      data.sort(function (a, b) {
+        var nameA = a.word.toLowerCase(),
+          nameB = b.word.toLowerCase();
+        if (nameA < nameB)
+          //сортируем строки по возрастанию
+          return -1;
+        if (nameA > nameB) return 1;
+        return 0; // Никакой сортировки
+      });
+      setStat(data);
+      //   console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -49,9 +51,8 @@ const StatPage = () => {
             </tr>
           </thead>
           <tbody>
-            {stat.length && stat.map((item) => (
-              <TableItem key={item._id} row={item}/>
-            ))}
+            {stat.length &&
+              stat.map((item) => <TableItem key={item._id} row={item} />)}
           </tbody>
         </table>
       </div>
