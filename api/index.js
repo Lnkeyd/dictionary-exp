@@ -18,7 +18,10 @@ const checkAuth = require("./middleware/checkAuth")
 
 dotenv.config({ path: `${__dirname}/../.env` });
 // app.use(express.json({ extended: false }));
-app.use(express.json());
+app.use(express.json({ extended: false }));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
 app.use(bodyParser.json());
 app.use(cookies());
 app.use(cors({
