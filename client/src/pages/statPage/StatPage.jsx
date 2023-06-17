@@ -3,7 +3,7 @@ import Header from "../../components/header/Header";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import TableItem from "../../components/tableItem/TableItem";
-import styles from './StatPage.module.scss'
+import styles from "./StatPage.module.scss";
 
 const StatPage = () => {
   const { user } = useSelector((store) => store.user);
@@ -14,14 +14,12 @@ const StatPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('STAT IS', stat)
-  }, [stat])
+    console.log("STAT IS", stat);
+  }, [stat]);
 
   const getStat = async () => {
     try {
-      const res = await axios.get(`/api/stat/${user}`, {
-        params: { username: user },
-      });
+      const res = await axios.get(`/api/stat?username=${user}`);
       setStat(res.data);
       console.log(res.data);
     } catch (err) {
