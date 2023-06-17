@@ -21,7 +21,15 @@ const StatPage = () => {
     try {
       const res = await axios.get(`/api/stat/`, {params: {username: user}});
       const data = await res.data
-      setStat(data);
+      const sorted = data.sort(function(a, b){
+        var nameA = a.word.toLowerCase(), nameB=b.word.toLowerCase()
+        if (nameA < nameB) //сортируем строки по возрастанию
+          return -1
+        if (nameA > nameB)
+          return 1
+        return 0 // Никакой сортировки
+        })
+      setStat(sorted);
     //   console.log(data);
     } catch (err) {
       console.log(err);
