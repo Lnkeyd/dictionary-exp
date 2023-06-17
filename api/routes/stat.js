@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
   }
   try {
     const data = await UserModel.findOne({ username: username })
-    return res.status(200).send(data.statistics)
+    return res.status(200).json(data.statistics)
   } catch(err) {
     return res.status(400).send(err)
   }

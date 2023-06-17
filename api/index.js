@@ -12,10 +12,6 @@ const bodyParser = require("body-parser");
 const cookies = require("cookie-parser");
 const checkAuth = require("./middleware/checkAuth")
 
-// const DictionaryModel = require('./models/Dictionary');
-// const myDict = new DictionaryModel()
-// const Dictionary = require("./testData/testData");
-
 dotenv.config({ path: `${__dirname}/../.env` });
 // app.use(express.json({ extended: false }));
 app.use(express.json({ extended: false }));
