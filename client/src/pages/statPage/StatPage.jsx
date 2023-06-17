@@ -13,6 +13,10 @@ const StatPage = () => {
     getStat();
   }, []);
 
+  useEffect(() => {
+    console.log('STAT IS', stat)
+  }, [stat])
+
   const getStat = async () => {
     try {
       const res = await axios.get(`/api/stat/${user}`, {
