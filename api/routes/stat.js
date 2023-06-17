@@ -5,11 +5,11 @@ const UserModel = require("../models/User");
 
 // получить статистику
 // router.get("/:username")
-router.get("/:username", async (req, res) => {
+router.get("/", async (req, res) => {
   const token = req.cookies.token;
   const jwtDecoded = jwt.decode(token);
-  console.dir('PARAMS: ' + req.params.username)
-  const username = req.params.username;
+  console.dir('PARAMS: ' + req.query.username)
+  const username = req.query.username;
   if (!username) {
     return res.status(400).send("Пользователя с таким именем не найдено");
   } 
