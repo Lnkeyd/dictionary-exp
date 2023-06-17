@@ -21,7 +21,7 @@ const StatPage = () => {
     try {
       const res = await axios.get(`/api/stat/`, {params: {username: user}});
       setStat(res.data);
-      console.log(res.data);
+      console.log(JSON.parse(res.data));
     } catch (err) {
       console.log(err);
     }
