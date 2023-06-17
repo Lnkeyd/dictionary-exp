@@ -25,12 +25,20 @@
             "destination": "https://deploy-dict-exp.vercel.app/api/dict/"
         },
         {
+            "source": "/api/stat*",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat*"
+        },
+        {
             "source": "/api/stat",
             "destination": "https://deploy-dict-exp.vercel.app/api/stat"
         },
         {
-            "source": "/api/stat/?username=*",
-            "destination": "https://deploy-dict-exp.vercel.app/api/stat/?username=*"
+            "source": "/api/stat/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat/"
+        },
+        {
+            "source": "/api/stat*/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat*/"
         }
       ]
 }

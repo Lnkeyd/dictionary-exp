@@ -4,7 +4,8 @@ const router = express.Router();
 const UserModel = require("../models/User");
 
 // получить статистику
-router.get("/", async (req, res) => {
+// router.get("/:username")
+router.get("/:username", async (req, res) => {
   const token = req.cookies.token;
   const jwtDecoded = jwt.decode(token);
   console.dir('PARAMS: ' + req.params.username)
