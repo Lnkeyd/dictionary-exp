@@ -13,9 +13,9 @@ const StatPage = () => {
     getStat();
   }, []);
 
-  useEffect(() => {
-    console.log("STAT IS", stat);
-  }, [stat]);
+//   useEffect(() => {
+//     console.log("STAT IS", stat);
+//   }, [stat]);
 
   const getStat = async () => {
     try {
