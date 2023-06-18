@@ -6,10 +6,10 @@ const UserModel = require("../models/User");
 // получить слова
 router.get("/", (req, res) => {
   console.log("Get dictionary");
-  DictionaryModel.find()
+  DictionaryModel.findOne({DictId: '111'})
     .then((data) => {
-      // все слова
-      res.send(data[0].words);
+      // все слова по данному словарю
+      res.send(data.words);
     })
     .catch((err) => console.log(err));
 });

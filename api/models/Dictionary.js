@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 const DictionarySchema = new mongoose.Schema(
   {
     words: [String],
+    DictId: {
+      type: String,
+      required: true,
+      unique: true
+    },
   },
   { collection: "Dictionary" }
 );
