@@ -1,19 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken")
 const DictionaryModel = require("../models/Dictionary");
 const UserModel = require("../models/User");
 
 // получить слова к определённому пользователю
-router.get("/", async (req, res) => {
+router.get("/", (req, res) => {
   console.log("Get dictionary");
-  const token = await req.cookies.token;
-  const jwtDecoded = await jwt.decode(token);
+  const token = req.cookies.token;
+  const jwtDecoded = jwt.decode(token);
   if (!token) {
       res.redirect('/')
       return res.status(400).send("Токен не найден")
   }
 
-  await DictionaryModel.findOne({DictName: jwtDecoded.user.username})
+  DictionaryModel.findOne({DictName: jwtDecoded.user.username})
     .then((data) => {
       // все слова по данному словарю
       res.send(data.words);
