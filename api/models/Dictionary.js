@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const DictionarySchema = new mongoose.Schema(
   {
     words: [String],
-    DictId: {
+    DictName: {
       type: String,
       required: true,
       unique: true

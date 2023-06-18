@@ -3,10 +3,17 @@ const router = express.Router();
 const DictionaryModel = require("../models/Dictionary");
 const UserModel = require("../models/User");
 
-// получить слова
-router.get("/", (req, res) => {
+// получить слова к определённому пользователю
+router.get("/", async (req, res) => {
   console.log("Get dictionary");
-  DictionaryModel.findOne({DictId: '111'})
+  const token = await req.cookies.token;
+  const jwtDecoded = await jwt.decode(token);
+  if (!token) {
+      res.redirect('/')
+      return res.status(400).send("Токен не найден")
+  }
+
+  await DictionaryModel.findOne({DictName: jwtDecoded.user.username})
     .then((data) => {
       // все слова по данному словарю
       res.send(data.words);
