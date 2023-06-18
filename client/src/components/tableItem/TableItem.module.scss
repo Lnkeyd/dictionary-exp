@@ -3,10 +3,10 @@
     >td {
         border: 1px solid black;
         padding: 3px;
-        background-color: beige;
-        word-break: break-all;
+        word-wrap: break-word;
     }
     .word, .reaction {
         background-color: rgb(255, 255, 255);
+        word-wrap: break-word;
     }
 }
