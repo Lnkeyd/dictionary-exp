@@ -7,7 +7,7 @@ const UserModel = require("../models/User");
 // получить слова к определённому пользователю
 router.get("/", (req, res) => {
   console.log("Get dictionary");
-  const token = req.cookies.token;
+  const token = req.cookies?.accessToken;
   const jwtDecoded = jwt.decode(token);
   if (!token) {
       res.redirect('/')
