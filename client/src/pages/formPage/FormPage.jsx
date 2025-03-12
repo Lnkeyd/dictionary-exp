@@ -198,16 +198,21 @@ const FormPage = () => {
                       className="input"
                       value={currentReaction}
                       onChange={(e) => {
-                        const newReaction = e.target.value;
+                        const newReaction = e.target.value.trim();
+
+                        const formattedReaction =
+                        newReaction.length > 0
+                          ? newReaction.charAt(0).toUpperCase() + newReaction.slice(1)
+                          : "";
 
                         // Обновляем текущую сессию
                         const updatedSession = session.map((item) =>
-                          item.word === currentWord ? { ...item, reaction: newReaction } : item
+                          item.word === currentWord ? { ...item, reaction: formattedReaction } : item
                         );
 
                         // Если слово еще не добавлено в сессию, добавляем его
                         if (!session.some((item) => item.word === currentWord)) {
-                          updatedSession.push({ word: currentWord, reaction: newReaction });
+                          updatedSession.push({ word: currentWord, reaction: formattedReaction });
                         }
 
                         setSession(updatedSession);
