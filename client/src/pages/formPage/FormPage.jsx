@@ -26,6 +26,11 @@ const FormPage = () => {
   // Проверка авторизации пользователя
   const { user } = useSelector((store) => store.user);
   // const user = JSON.parse(localStorage.getItem("authUser"));
+  console.log("User in FormPage:", user);
+
+  useEffect(() => {
+    console.log("Dict updated:", dict);
+  }, [dict]);
 
   useEffect(() => {
     if (!user) {
@@ -33,7 +38,7 @@ const FormPage = () => {
     }
     loadFromLocalStorage();
     getData();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     saveToLocalStorage();
