@@ -5,16 +5,23 @@ const DictionaryModel = require("../models/Dictionary");
 const UserModel = require("../models/User");
 
 // получить слова к определённому пользователю
-router.get("/", (req, res) => {
+router.get("/:username", async (req, res) => {
   console.log("Get dictionary");
-  const token = req.cookies?.accessToken;
+  const { username } = req.params
+  const token = req.cookies.accessToken;
   const jwtDecoded = jwt.decode(token);
   if (!token) {
       res.redirect('/')
       return res.status(400).send("Токен не найден")
   }
 
-  DictionaryModel.findOne({DictName: jwtDecoded.user.username})
+  else if (username !== jwtDecoded.username) {
+    return res.status(403).send("Вы можете получить слова только для себя!")
+  }
+
+  const user = await UserModel.findOne({username})
+
+  DictionaryModel.findOne({id: Number(user.active_dict_id)})
     .then((data) => {
       // все слова по данному словарю
       res.send(data.words);
