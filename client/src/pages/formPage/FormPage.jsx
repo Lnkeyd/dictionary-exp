@@ -63,7 +63,9 @@ const FormPage = () => {
   // Получение данных о словах с сервера
   const getData = async () => {
     try {
+      console.log('TRY TO GET DATA')
       const res = await axios.get(`/api/dict/${user?.username}`);
+      console.log("GET DICT RES: ", res)
       const arrData = res.data
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
