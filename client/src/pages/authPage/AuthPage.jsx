@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   TextInput,
   Button,
@@ -7,6 +7,7 @@ import {
   Text,
   Group,
   Box,
+  Loader,
 } from "@mantine/core";
 import { Navigate, useNavigate } from "react-router";
 import { authUser } from "../../services/auth.service";
@@ -19,11 +20,13 @@ const AuthPage = () => {
   const dispatch = useDispatch();
   const { token } = useSelector((store) => store.user);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const data = await authUser(
         userRef.current.value,
         passwordRef.current.value
@@ -35,12 +38,10 @@ const AuthPage = () => {
       setTimeout(() => {
         setError(false);
       }, 2000);
+    } finally {
+      setLoading(false); // Выключаем загрузку
     }
   };
-
-  // useEffect(() => {
-  //   // Если пользователь уже авторизован, перенаправляем его
-  // }, [navigate, token])
 
   return (
     <Box
@@ -95,8 +96,14 @@ const AuthPage = () => {
             mb="md"
           />
 
-          <Button type="submit" fullWidth mb="md">
-            Войти
+          <Button
+            type="submit"
+            fullWidth
+            mb="md"
+            loading={loading}
+            loader={<Loader size="sm" />}
+          >
+            {loading ? "Загрузка..." : "Войти"}
           </Button>
 
           {error && (

@@ -26,7 +26,6 @@ const FormPage = () => {
   // Проверка авторизации пользователя
   const { user } = useSelector((store) => store.user);
   // const user = JSON.parse(localStorage.getItem("authUser"));
-  console.log("User in FormPage:", user);
 
   useEffect(() => {
     console.log("Dict updated:", dict);
@@ -63,9 +62,7 @@ const FormPage = () => {
   // Получение данных о словах с сервера
   const getData = async () => {
     try {
-      console.log('TRY TO GET DATA')
       const res = await axios.get(`/api/dict/${user?.username}`);
-      console.log("GET DICT RES: ", res)
       const arrData = res.data
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
@@ -150,8 +147,7 @@ const FormPage = () => {
                 <div>
                   <p>
                     Реакции начинать писать с большой буквы, после слов не оставлять лишних пробелов,
-                    заполнять и отправлять данные только один раз, больше не нужно. Результаты по всем
-                    словам всех других людей можно видеть в разделе статистика.
+                    заполнять и отправлять данные только один раз, больше не нужно.
                   </p>
                   <p>
                     Можно использовать русские-латинские, цифры и др. спец. символы. Единственное,
