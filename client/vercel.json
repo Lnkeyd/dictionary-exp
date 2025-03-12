@@ -33,6 +33,14 @@
             "destination": "https://deploy-dict-exp.vercel.app/api/stat/"
         },
         {
+          "source": "/api/check-auth",
+          "destination": "https://deploy-dict-exp.vercel.app/api/check-auth"
+        },
+        {
+          "source": "/api/check-auth/",
+          "destination": "https://deploy-dict-exp.vercel.app/api/check-auth/"
+        },
+        {
           "source": "/(.*)",
           "destination": "/"
         }
