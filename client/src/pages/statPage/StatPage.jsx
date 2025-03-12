@@ -1,62 +1,70 @@
 import React, { useEffect, useState } from "react";
-import Header from "../../components/header/Header";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { Container, Table, Title, Text, Center, Flex } from "@mantine/core";
+import Header from "../../components/header/Header";
 import TableItem from "../../components/tableItem/TableItem";
-import styles from "./StatPage.module.scss";
 
 const StatPage = () => {
   const { user } = useSelector((store) => store.user);
+  console.dir(user)
   const [stat, setStat] = useState([]);
 
   useEffect(() => {
-    getStat();
-  }, []);
-
-  //   useEffect(() => {
-  //     console.log("STAT IS", stat);
-  //   }, [stat]);
-
-  const getStat = async () => {
-    try {
-      const res = await axios.get(`/api/stat/`, { params: { username: user } });
-      const data = await res.data;
-      //   sorted
-      data.sort(function (a, b) {
-        var nameA = a.word.toLowerCase(),
-          nameB = b.word.toLowerCase();
-        if (nameA < nameB)
-          //сортируем строки по возрастанию
-          return -1;
-        if (nameA > nameB) return 1;
-        return 0; // Никакой сортировки
-      });
-      setStat(data);
-      //   console.log(data);
-    } catch (err) {
-      console.log(err);
+    async function getStat() {
+      try {
+        const res = await axios.get(`/api/stat/${user.username}`);
+        const data = res.data;
+  
+        // Сортировка данных по алфавиту
+        data.sort((a, b) => {
+          const nameA = a.word.toLowerCase();
+          const nameB = b.word.toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+  
+        setStat(data);
+      } catch (err) {
+        console.error("Ошибка при получении статистики:", err);
+      }
     }
-  };
+    getStat();
+  }, [user.username]);
+
 
   return (
-    <div className={styles.page}>
+    <Container size="xl" px="md">
       <Header />
-      <div className={styles.container}>
-        <h1>Статистика</h1>
-        <table className={styles.table}>
-          <thead className={styles.thead}>
+      <Title order={1} align="center" mt="xl">
+        Статистика
+      </Title>
+      <Text color="dimmed" align="center" mb="xl" fw={500}>
+        Здесь вы можете просмотреть все слова и их реакции.
+      </Text>
+      <Flex style={{display: 'flex'}} justify="center" mt="xl">
+        <Table style={{maxWidth: "700px", marginBottom: "40px"}} striped highlightOnHover withBorder withColumnBorders mt="lg">
+          <thead>
             <tr>
               <th>Слово</th>
               <th>Реакции</th>
             </tr>
           </thead>
           <tbody>
-            {stat.length &&
-              stat.map((item) => <TableItem key={item._id} row={item} />)}
+            {stat.length > 0 ? (
+              stat.map((item) => <TableItem key={item._id} row={item} />)
+            ) : (
+              <tr>
+                <td colSpan={2}>
+                  <Text align="center" color="dimmed">
+                    Нет данных для отображения.
+                  </Text>
+                </td>
+              </tr>
+            )}
           </tbody>
-        </table>
-      </div>
-    </div>
+        </Table>
+      </Flex>
+    </Container>
   );
 };
 

@@ -1,68 +1,112 @@
-import React, { useContext, useRef, useState } from "react";
-import styles from "./AuthPage.module.scss";
-import { Navigate } from "react-router";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  TextInput,
+  Button,
+  Paper,
+  Title,
+  Text,
+  Group,
+  Box,
+} from "@mantine/core";
+import { Navigate, useNavigate } from "react-router";
 import { authUser } from "../../services/auth.service";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserToken } from "../../store/userSlice";
+import { setAuthUser } from "../../store/userSlice";
 
 const AuthPage = () => {
   const userRef = useRef();
   const passwordRef = useRef();
   const dispatch = useDispatch();
-  const { user } = useSelector((store) => store.user);
-  const [error, setError] = useState(false)
+  const { token } = useSelector((store) => store.user);
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = await authUser(
-      userRef.current.value,
-      passwordRef.current.value
-    );
-    if (!token) {
-      setError(true)
+
+    try {
+      const data = await authUser(
+        userRef.current.value,
+        passwordRef.current.value
+      );
+      // Сохраняем токен в Redux
+      dispatch(setAuthUser(data));
+    } catch (err) {
+      setError(true);
       setTimeout(() => {
-        setError(false)
-      }, 2000)
+        setError(false);
+      }, 2000);
     }
-    else {
-      setError(false)
-    }
-    dispatch(setUserToken(token));
   };
 
+  // useEffect(() => {
+  //   // Если пользователь уже авторизован, перенаправляем его
+  // }, [navigate, token])
+
   return (
-    <div className={styles.page}>
-      {user && <Navigate to="/form" replace={true} />}
-      <div className={styles.container}>
-        <div>
-          <h1 className={styles.header}>Авторизация</h1>
-        </div>
-        <form action="" className="loginForm" onSubmit={handleSubmit}>
-          <div className={styles.row}>
-            <label className={styles.label}>Username</label>
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="Введите username..."
-              ref={userRef}
-            />
-          </div>
-          <div className={styles.row}>
-            <label className={styles.label}>Пароль</label>
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="Введите пароль..."
-              ref={passwordRef}
-            />
-          </div>
-          <button className={styles.button} type="submit">
+    <Box
+      sx={(theme) => ({
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[8]
+            : theme.colors.gray[1],
+      })}
+      style={{
+        maxWidth: "500px",
+        margin: "150px auto",
+        marginTop: "150px",
+      }}
+    >
+      <Paper
+        shadow="md"
+        p="xl"
+        radius="md"
+        withBorder
+        sx={(theme) => ({
+          maxWidth: 400,
+          width: "100%",
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[7]
+              : theme.white,
+        })}
+      >
+        <Title order={2} align="center" mb="lg">
+          Авторизация
+        </Title>
+
+        <form onSubmit={handleSubmit}>
+          <TextInput
+            label="Имя пользователя"
+            placeholder="Введите username..."
+            ref={userRef}
+            required
+            mb="sm"
+          />
+
+          <TextInput
+            label="Пароль"
+            placeholder="Введите пароль..."
+            type="password"
+            ref={passwordRef}
+            required
+            mb="md"
+          />
+
+          <Button type="submit" fullWidth mb="md">
             Войти
-          </button>
-          {error && <p className={styles.error}>Такого пользователя не существует</p>}
+          </Button>
+
+          {error && (
+            <Text color="red" size="sm" align="center">
+              Такого пользователя не существует
+            </Text>
+          )}
         </form>
-      </div>
-    </div>
+      </Paper>
+    </Box>
   );
 };
 

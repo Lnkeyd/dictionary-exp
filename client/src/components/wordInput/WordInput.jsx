@@ -19,10 +19,10 @@ const WordInput = ({word, success}) => {
     }, [debouncedValue, success])
 
   return (
-    <div className={styles.container}>
-        <label>{word}</label>
+    <tr className={styles.container}>
+        <td>{word}&nbsp;</td>
         <input className={styles.input} value={value} onChange={(e) => setValue(e.target.value)} />
-    </div>
+    </tr>
   )
 }
 

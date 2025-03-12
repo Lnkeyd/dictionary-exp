@@ -5,9 +5,19 @@ const DictionarySchema = new mongoose.Schema(
     words: [String],
     DictName: {
       type: String,
-      required: true,
-      unique: true
+      required: false,
+      unique: false
     },
+    label: {
+      type: String,
+      required: false,
+      unique: false
+    },
+    id: {
+      type: Number,
+      required: true,
+      unique: true,
+    }
   },
   { collection: "Dictionary" }
 );

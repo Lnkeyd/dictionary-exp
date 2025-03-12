@@ -50,6 +50,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    active_dict_id: {
+      type: String,
+      required: false,
+      unique: false,
+    },
     level: {
       type: Number,
       required: true,

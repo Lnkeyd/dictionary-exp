@@ -1,19 +1,27 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken")
 const DictionaryModel = require("../models/Dictionary");
 const UserModel = require("../models/User");
 
 // получить слова к определённому пользователю
-router.get("/", async (req, res) => {
+router.get("/:username", async (req, res) => {
   console.log("Get dictionary");
-  const token = await req.cookies.token;
-  const jwtDecoded = await jwt.decode(token);
+  const { username } = req.params
+  const token = req.cookies.accessToken;
+  const jwtDecoded = jwt.decode(token);
   if (!token) {
       res.redirect('/')
       return res.status(400).send("Токен не найден")
   }
 
-  await DictionaryModel.findOne({DictName: jwtDecoded.user.username})
+  else if (username !== jwtDecoded.username) {
+    return res.status(403).send("Вы можете получить слова только для себя!")
+  }
+
+  const user = await UserModel.findOne({username})
+
+  DictionaryModel.findOne({id: Number(user.active_dict_id)})
     .then((data) => {
       // все слова по данному словарю
       res.send(data.words);
@@ -30,14 +38,26 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   const username = req.body.username;
   const session = req.body.session;
-  console.log(session);
   console.log("Push session");
+  
 
   if (!username || !session || session.length === 0) {
     return res
       .status(400)
       .json("Пользователь не найден, либо ваша сессия пустая!");
   }
+
+  const token = req.cookies.accessToken;
+  const jwtDecoded = jwt.decode(token);
+  if (!token) {
+      res.redirect('/')
+      return res.status(400).send("Токен не найден")
+  }
+
+  else if (username !== jwtDecoded.username) {
+    return res.status(403).send("Вы можете загрузить слова только для себя!")
+  }
+
   try {
     let result = await UserModel.updateOne(
       { username: username },

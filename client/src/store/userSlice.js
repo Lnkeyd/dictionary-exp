@@ -2,27 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
+  type: 'user',
+  token: null,
   session: [],
 };
-
-// const userLogin = createAsyncThunk(
-//   'user/login',
-//   async ({username, password}, thunkAPI) => {
-//     const response = await userAPI.fetchById(userId)
-//     return response.data
-//   }
-// )
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUserToken: (state, action) => {
-      state.user = action.payload;
+    setAuthUser: (state, action) => {
+      state.token = action.payload.accessToken;
+      state.user = action.payload.user;
     },
-    removeUserToken: (state) => {
+    removeAuthUser: (state) => {
+      state.token = null;
       state.user = null;
-      state.session = [];
     },
     initSession: (state, action) => {
       const newSession = action.payload.map((item) => {
@@ -38,14 +33,9 @@ export const userSlice = createSlice({
       rightObject.reaction = action.payload.reaction
     }
   },
-  // extraReducers: {
-  //   [userLogin.pending]: (state, action) => {
-  //     return state + action.payload
-  //   },
-  // },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUserToken, removeUserToken, initSession, updateWord } = userSlice.actions;
+export const { setAuthUser, removeAuthUser, initSession, updateWord } = userSlice.actions;
 
 export default userSlice.reducer;

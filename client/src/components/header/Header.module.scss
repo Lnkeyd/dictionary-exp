@@ -1,0 +1,63 @@
+// Переменные для цветов
+$menu-bg-color: #2f3640; // Темный фон
+$text-color: #ffffff;    // Белый текст
+$hover-color: #404e5c;   // Цвет фона при наведении
+$logout-color: #e74c3c;  // Красный цвет для кнопки выхода
+
+// Общие стили для меню
+.menu {
+  background-color: $menu-bg-color;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  // Список пунктов меню
+  .menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px; // Расстояние между элементами
+
+    // Отдельный пункт меню
+    .menu-item {
+      position: relative;
+
+      // Стиль ссылок и кнопок
+      .menu-link {
+        text-decoration: none;
+        color: $text-color;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px; // Расстояние между иконкой и текстом
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: $hover-color;
+        }
+
+        // Иконки
+        svg {
+          font-size: 20px;
+        }
+      }
+
+      // Стиль кнопки выхода
+      .logout-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $logout-color;
+          color: $text-color;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+}
