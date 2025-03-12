@@ -17,6 +17,14 @@
             "destination": "https://deploy-dict-exp.vercel.app/api/login/logout/"
           },
         {
+          "source": "/api/login/check-auth",
+          "destination": "https://deploy-dict-exp.vercel.app/api/login/check-auth"
+        },
+        {
+          "source": "/api/login/check-auth/",
+          "destination": "https://deploy-dict-exp.vercel.app/api/login/check-auth/"
+        },
+        {
             "source": "/api/dict",
             "destination": "https://deploy-dict-exp.vercel.app/api/dict"
         },
@@ -31,14 +39,6 @@
         {
             "source": "/api/stat/",
             "destination": "https://deploy-dict-exp.vercel.app/api/stat/"
-        },
-        {
-          "source": "/api/check-auth",
-          "destination": "https://deploy-dict-exp.vercel.app/api/check-auth"
-        },
-        {
-          "source": "/api/check-auth/",
-          "destination": "https://deploy-dict-exp.vercel.app/api/check-auth/"
         },
         {
           "source": "/(.*)",
