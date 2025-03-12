@@ -22,7 +22,7 @@
         },
         {
           "source": "/api/dict/:path*",
-          "destination": "https://your-api-server.com/api/dict/:path*"
+          "destination": "https://deploy-dict-exp.vercel.app/api/dict/:path*"
         },
         {
             "source": "/api/stat",
