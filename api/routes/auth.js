@@ -117,7 +117,7 @@ router.post("/logout", async (req, res) => {
   }
 });
 
-// CHECK AUTH
+// CHECK AUTH WHEN LOGIN
 router.get("/check-auth", async (req, res) => {
   try {
     const accessToken = req.cookies?.accessToken;
