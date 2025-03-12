@@ -21,8 +21,8 @@
             "destination": "https://deploy-dict-exp.vercel.app/api/dict"
         },
         {
-            "source": "/api/dict/",
-            "destination": "https://deploy-dict-exp.vercel.app/api/dict/"
+          "source": "/api/dict/:path*",
+          "destination": "https://your-api-server.com/api/dict/:path*"
         },
         {
             "source": "/api/stat",
@@ -31,6 +31,10 @@
         {
             "source": "/api/stat/",
             "destination": "https://deploy-dict-exp.vercel.app/api/stat/"
+        },
+        {
+          "source": "/(.*)",
+          "destination": "/"
         }
       ]
 }
