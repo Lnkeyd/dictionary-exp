@@ -73,6 +73,10 @@ const UserSchema = new mongoose.Schema(
           type: String,
           // required: true
         },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        }
       }]
     ],
     // Массив со статистикой по всем сессиям

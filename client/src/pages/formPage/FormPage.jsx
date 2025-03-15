@@ -15,21 +15,29 @@ import { useSelector } from "react-redux";
 import Header from "../../components/header/Header";
 
 const FormPage = () => {
+  // Проверка авторизации пользователя
+  const { user } = useSelector((store) => store.user);
+
+ // Загрузка данных из localStorage
+ const loadFromLocalStorage = () => {
+    const savedData = JSON.parse(localStorage.getItem("formSession"));
+    if (savedData && savedData.username === user?.username) {
+      return savedData.session || [];
+    }
+    return [];
+  };
+
   const navigate = useNavigate();
-  const [dict, setDict] = useState([]); // Словарь слов
+  const [fullDict, setFullDict] = useState([]); // полный словарь слов
+  const [dict, setDict] = useState([]); // отфильтрованный словарь слов
   const [currentWordIndex, setCurrentWordIndex] = useState(0); // Индекс текущего слова
-  const [session, setSession] = useState([]); // Текущая сессия (слово-реакция)
+  const [session, setSession] = useState(loadFromLocalStorage()); // Текущая сессия (слово-реакция)
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  // Проверка авторизации пользователя
-  const { user } = useSelector((store) => store.user);
-  // const user = JSON.parse(localStorage.getItem("authUser"));
 
-  useEffect(() => {
-    console.log("Dict updated:", dict);
-  }, [dict]);
+
 
   useEffect(() => {
     if (!user) {
@@ -43,19 +51,12 @@ const FormPage = () => {
     saveToLocalStorage();
   }, [session]);
 
-  // Загрузка данных из localStorage
-  const loadFromLocalStorage = () => {
-    const savedData = JSON.parse(localStorage.getItem("formSession"));
-    if (savedData && savedData.username === user?.username) {
-      setSession(savedData.session);
-    }
-  };
 
   // Сохранение данных в localStorage
-  const saveToLocalStorage = () => {
+  const saveToLocalStorage = (localSession = null) => {
     localStorage.setItem(
       "formSession",
-      JSON.stringify({ username: user?.username, session })
+      JSON.stringify({ username: user?.username, session: localSession ?? session })
     );
   };
 
@@ -63,11 +64,22 @@ const FormPage = () => {
   const getData = async () => {
     try {
       const res = await axios.get(`/api/dict/${user?.username}`);
-      const arrData = res.data
+      const arrData = res.data;
+  
+      // Сохраняем полный список слов
+      setFullDict(arrData);
+  
+      // Исключаем слова, которые уже есть в session
+      const filteredData = arrData.filter((word) => !session.some((item) => item.word === word));
+  
+      // Перемешиваем оставшиеся слова
+      const shuffledData = filteredData
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
-      setDict(arrData);
+  
+      // Сохраняем отфильтрованный список слов
+      setDict(shuffledData);
     } catch (err) {
       if (err?.response?.data === "no token" || err?.response?.data === "invalid token") {
         console.log("У вас нет нужного токена");
@@ -86,24 +98,48 @@ const FormPage = () => {
   // Отправка данных на сервер
   const handleSubmit = async () => {
     try {
-      const originalWords = dict;
-      const submittedWords = session.map((item) => item.word);
-
+      // Используем полный список слов для проверки
+      const originalWords = fullDict;
+      const storageSession = JSON.parse(localStorage.getItem("formSession"))?.session
+      const submittedWords = storageSession?.map((item) => item.word);
+  
       if (
         originalWords.length !== submittedWords.length ||
-        !originalWords.every((word, index) => word === submittedWords[index])
+        !originalWords.every((word) => submittedWords.includes(word))
       ) {
         throw new Error("Несоответствие списка слов!");
       }
 
-      await axios.post(`/api/dict`, { username: user?.username, session });
-      setNotification({ type: "success", message: "Данные успешно отправлены! Возвращайтесь через некоторое время чтобы пройти эксперимент ещё раз." });
+      // Проверка timestamp
+      const isTimestampValid = storageSession.every((item) => {
+        // Проверяем, что поле timestamp существует
+        if (!item.timestamp) {
+          return false;
+        }
+
+        // Проверяем, что timestamp является валидной датой
+        const date = new Date(item.timestamp);
+        return date instanceof Date && !isNaN(date); // Валидная дата
+      });
+
+      if (!isTimestampValid) {
+        throw new Error("Некорректный или отсутствующий timestamp!");
+      }
+  
+      await axios.post(`/api/dict`, { username: user?.username, session: storageSession});
+      setNotification({
+        type: "success",
+        message:
+          "Данные успешно отправлены! Возвращайтесь через некоторое время чтобы пройти эксперимент ещё раз.",
+      });
+  
       localStorage.setItem(
         "formSession",
-        JSON.stringify({ username: user?.username, session: []})
+        JSON.stringify({ username: user?.username, session: [] })
       );
-      setSession([])
-      setCurrentWordIndex(0)
+  
+      setSession([]);
+      setCurrentWordIndex(0);
       setTimeout(() => {
         navigate("/form");
       }, 5000);
@@ -121,7 +157,7 @@ const FormPage = () => {
 
   return (
     <>
-      <Header/>
+      <Header />
       <Box p="md">
         <Title order={1} align="center" mb="lg">
           Анкета
@@ -169,6 +205,34 @@ const FormPage = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+
+            // Добавляем timestamp при нажатии на кнопку
+            // const updatedSession = session.map((item) =>
+            //   item.word === currentWord
+            //     ? { ...item, timestamp: new Date().toISOString() }
+            //     : item
+            // );
+            const updatedSession = session.map((item) => {
+              if (item.word === currentWord) {
+                return { ...item, timestamp: new Date().toISOString() }
+              } else {
+                return item
+              }
+            }
+            );
+
+            // Если слово еще не добавлено в сессию, добавляем его с timestamp
+            if (!session.some((item) => item.word === currentWord)) {
+              updatedSession.push({
+                word: currentWord,
+                reaction: currentReaction,
+                timestamp: new Date().toISOString(),
+              });
+            }
+
+            saveToLocalStorage(updatedSession);
+            setSession(updatedSession);
+
             if (currentWordIndex === dict.length - 1) {
               handleSubmit();
               e.target.reset();
@@ -197,11 +261,11 @@ const FormPage = () => {
                         const newReaction = e.target.value.trim();
 
                         const formattedReaction =
-                        newReaction.length > 0
-                          ? newReaction.charAt(0).toUpperCase() + newReaction.slice(1)
-                          : "";
+                          newReaction.length > 0
+                            ? newReaction.charAt(0).toUpperCase() + newReaction.slice(1)
+                            : "";
 
-                        // Обновляем текущую сессию
+                        // Обновляем текущую сессию без изменения timestamp
                         const updatedSession = session.map((item) =>
                           item.word === currentWord ? { ...item, reaction: formattedReaction } : item
                         );
