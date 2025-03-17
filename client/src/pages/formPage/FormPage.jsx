@@ -10,6 +10,7 @@ import {
   Box,
   Title,
   Notification,
+  Loader,
 } from "@mantine/core";
 import { useSelector } from "react-redux";
 import Header from "../../components/header/Header";
@@ -18,8 +19,8 @@ const FormPage = () => {
   // Проверка авторизации пользователя
   const { user } = useSelector((store) => store.user);
 
- // Загрузка данных из localStorage
- const loadFromLocalStorage = () => {
+  // Загрузка данных из localStorage
+  const loadFromLocalStorage = () => {
     const savedData = JSON.parse(localStorage.getItem("formSession"));
     if (savedData && savedData.username === user?.username) {
       return savedData.session || [];
@@ -35,9 +36,7 @@ const FormPage = () => {
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [notification, setNotification] = useState(null);
-
-
-
+  const [loading, setLoading] = useState(false); // Новое состояние для загрузки
 
   useEffect(() => {
     if (!user) {
@@ -50,7 +49,6 @@ const FormPage = () => {
   useEffect(() => {
     saveToLocalStorage();
   }, [session]);
-
 
   // Сохранение данных в localStorage
   const saveToLocalStorage = (localSession = null) => {
@@ -65,19 +63,19 @@ const FormPage = () => {
     try {
       const res = await axios.get(`/api/dict/${user?.username}`);
       const arrData = res.data;
-  
+
       // Сохраняем полный список слов
       setFullDict(arrData);
-  
+
       // Исключаем слова, которые уже есть в session
       const filteredData = arrData.filter((word) => !session.some((item) => item.word === word));
-  
+
       // Перемешиваем оставшиеся слова
       const shuffledData = filteredData
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
-  
+
       // Сохраняем отфильтрованный список слов
       setDict(shuffledData);
     } catch (err) {
@@ -98,11 +96,13 @@ const FormPage = () => {
   // Отправка данных на сервер
   const handleSubmit = async () => {
     try {
+      setLoading(true); // Включаем загрузку
+
       // Используем полный список слов для проверки
       const originalWords = fullDict;
-      const storageSession = JSON.parse(localStorage.getItem("formSession"))?.session
+      const storageSession = JSON.parse(localStorage.getItem("formSession"))?.session;
       const submittedWords = storageSession?.map((item) => item.word);
-  
+
       if (
         originalWords.length !== submittedWords.length ||
         !originalWords.every((word) => submittedWords.includes(word))
@@ -125,19 +125,19 @@ const FormPage = () => {
       if (!isTimestampValid) {
         throw new Error("Некорректный или отсутствующий timestamp!");
       }
-  
-      await axios.post(`/api/dict`, { username: user?.username, session: storageSession});
+
+      await axios.post(`/api/dict`, { username: user?.username, session: storageSession });
       setNotification({
         type: "success",
         message:
           "Данные успешно отправлены! Возвращайтесь через некоторое время чтобы пройти эксперимент ещё раз.",
       });
-  
+
       localStorage.setItem(
         "formSession",
         JSON.stringify({ username: user?.username, session: [] })
       );
-  
+
       setSession([]);
       setCurrentWordIndex(0);
       setTimeout(() => {
@@ -148,6 +148,8 @@ const FormPage = () => {
         type: "error",
         message: err.message || "Ошибка при отправке данных!",
       });
+    } finally {
+      setLoading(false); // Выключаем загрузку
     }
   };
 
@@ -207,19 +209,13 @@ const FormPage = () => {
             e.preventDefault();
 
             // Добавляем timestamp при нажатии на кнопку
-            // const updatedSession = session.map((item) =>
-            //   item.word === currentWord
-            //     ? { ...item, timestamp: new Date().toISOString() }
-            //     : item
-            // );
             const updatedSession = session.map((item) => {
               if (item.word === currentWord) {
-                return { ...item, timestamp: new Date().toISOString() }
+                return { ...item, timestamp: new Date().toISOString() };
               } else {
-                return item
+                return item;
               }
-            }
-            );
+            });
 
             // Если слово еще не добавлено в сессию, добавляем его с timestamp
             if (!session.some((item) => item.word === currentWord)) {
@@ -301,7 +297,9 @@ const FormPage = () => {
             type="submit"
             fullWidth
             mt="md"
-            disabled={!currentReaction.trim()}
+            disabled={!currentReaction.trim() || loading}
+            loading={loading}
+            loader={<Loader size="sm" />}
           >
             {currentWordIndex === dict.length - 1 ? "Отправить" : "Далее"}
           </Button>
