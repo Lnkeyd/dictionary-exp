@@ -204,106 +204,119 @@ const FormPage = () => {
           </Text>
         )}
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
 
-            // Добавляем timestamp при нажатии на кнопку
-            const updatedSession = session.map((item) => {
-              if (item.word === currentWord) {
-                return { ...item, timestamp: new Date().toISOString() };
-              } else {
-                return item;
-              }
-            });
+          // Проверяем, что реакция содержит хотя бы одну букву
+          if (!currentReaction.trim()) {
+            setError(true);
+            return;
+          }
 
-            // Если слово еще не добавлено в сессию, добавляем его с timestamp
-            if (!session.some((item) => item.word === currentWord)) {
-              updatedSession.push({
-                word: currentWord,
-                reaction: currentReaction,
-                timestamp: new Date().toISOString(),
-              });
-            }
+          setError(false); // Сбрасываем ошибку, если она была
 
-            saveToLocalStorage(updatedSession);
-            setSession(updatedSession);
-
-            if (currentWordIndex === dict.length - 1) {
-              handleSubmit();
-              e.target.reset();
+          // Добавляем timestamp при нажатии на кнопку
+          const updatedSession = session.map((item) => {
+            if (item.word === currentWord) {
+              return { ...item, reaction: currentReaction.trim(), timestamp: new Date().toISOString() };
             } else {
-              handleNext();
+              return item;
             }
-          }}
-          style={{
-            maxWidth: "max-content",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            margin: "0 auto",
-          }}
-        >
-          {dict.length > 0 && (
-            <Table striped highlightOnHover>
-              <tbody>
-                <tr key={currentWord}>
-                  <td>{currentWord}&nbsp;</td>
-                  <td>
-                    <input
-                      className="input"
-                      value={currentReaction}
-                      onChange={(e) => {
-                        const newReaction = e.target.value.trim();
+          });
 
-                        const formattedReaction =
-                          newReaction.length > 0
-                            ? newReaction.charAt(0).toUpperCase() + newReaction.slice(1)
-                            : "";
+          // Если слово еще не добавлено в сессию, добавляем его с timestamp
+          if (!session.some((item) => item.word === currentWord)) {
+            updatedSession.push({
+              word: currentWord,
+              reaction: currentReaction.trim(),
+              timestamp: new Date().toISOString(),
+            });
+          }
 
-                        // Обновляем текущую сессию без изменения timestamp
-                        const updatedSession = session.map((item) =>
-                          item.word === currentWord ? { ...item, reaction: formattedReaction } : item
-                        );
+          saveToLocalStorage(updatedSession);
+          setSession(updatedSession);
 
-                        // Если слово еще не добавлено в сессию, добавляем его
-                        if (!session.some((item) => item.word === currentWord)) {
-                          updatedSession.push({ word: currentWord, reaction: formattedReaction });
-                        }
+          if (currentWordIndex === dict.length - 1) {
+            handleSubmit();
+            e.target.reset();
+          } else {
+            handleNext();
+          }
+        }}
+        style={{
+          maxWidth: "max-content",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          margin: "0 auto",
+        }}
+      >
+        {dict.length > 0 && (
+          <Table striped highlightOnHover>
+            <tbody>
+              <tr key={currentWord}>
+                <td>{currentWord.toLowerCase()}&nbsp;</td>
+                <td>
+                  <input
+                    className="input"
+                    value={currentReaction}
+                    onChange={(e) => {
+                      const newReaction = e.target.value;
 
-                        setSession(updatedSession);
-                      }}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+                      // Проверяем, что введённое значение содержит хотя бы одну букву
+                      const hasLetters = /[a-zA-Zа-яА-Я]/.test(newReaction);
+
+                      if (!hasLetters && newReaction.trim() !== "") {
+                        setError(true);
+                        return;
+                      }
+
+                      setError(false); // Сбрасываем ошибку, если она была
+
+                      // Обновляем текущую сессию без изменения timestamp
+                      const updatedSession = session.map((item) =>
+                        item.word === currentWord ? { ...item, reaction: newReaction } : item
+                      );
+
+                      // Если слово еще не добавлено в сессию, добавляем его
+                      if (!session.some((item) => item.word === currentWord)) {
+                        updatedSession.push({ word: currentWord, reaction: newReaction });
+                      }
+
+                      setSession(updatedSession);
+                    }}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        )}
+
+        <Group mt="md">
+          {error && (
+            <Text color="red" size="sm">
+              Реакция должна содержать хотя бы одну букву!
+            </Text>
           )}
+          {success && (
+            <Text color="green" size="sm">
+              Данные успешно загружены!
+            </Text>
+          )}
+        </Group>
 
-          <Group mt="md">
-            {error && (
-              <Text color="red" size="sm">
-                Заполните все поля
-              </Text>
-            )}
-            {success && (
-              <Text color="green" size="sm">
-                Данные успешно загружены!
-              </Text>
-            )}
-          </Group>
-
-          <Button
-            type="submit"
-            fullWidth
-            mt="md"
-            disabled={!currentReaction.trim() || loading}
-            loading={loading}
-            loader={<Loader size="sm" />}
-          >
-            {currentWordIndex === dict.length - 1 ? "Отправить" : "Далее"}
-          </Button>
-        </form>
+        <Button
+          type="submit"
+          fullWidth
+          mt="md"
+          disabled={!currentReaction || loading}
+          loading={loading}
+          loader={<Loader size="sm" />}
+        >
+          {currentWordIndex === dict.length - 1 ? "Отправить" : "Далее"}
+        </Button>
+      </form>
       </Box>
     </>
   );
