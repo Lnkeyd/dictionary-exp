@@ -256,7 +256,7 @@ const FormPage = () => {
           <Table striped highlightOnHover>
             <tbody>
               <tr key={currentWord}>
-                <td>{currentWord.toLowerCase()}&nbsp;</td>
+                <td>{currentWord.charAt(0).toUpperCase() + currentWord.slice(1).toLowerCase()}&nbsp;</td>
                 <td>
                   <input
                     className="input"
