@@ -39,19 +39,21 @@ app.use('/api/login', authRoute)
 
 app.use('/api/dict', checkAuth, dictRoute)
 
-// app.use('/api/stat', checkAuth, statRoute)
+app.use('/api/stat', checkAuth, statRoute)
 
 // С CREDENTIALS
-// app.use('/api/admin', checkAuth, adminRoute)
-// app.use('/api/admin/users', checkAuth, adminRoute)
-// app.use('/api/admin/dictionaries', checkAuth, adminRoute)
-// app.use('/api/admin/add-dictionary', checkAuth, adminRoute)
+app.use('/api/admin', checkAuth, adminRoute)
+app.use('/api/admin/users', checkAuth, adminRoute)
+app.use('/api/admin/dictionaries', checkAuth, adminRoute)
+app.use('/api/admin/add-dictionary', checkAuth, adminRoute)
+app.use('/api/admin/analytics', checkAuth, adminRoute)
+app.use('/api/admin/export', checkAuth, adminRoute)
 
-// app.use('/api/admin', adminRoute)
-// app.use('/api/admin/users', adminRoute)
-// app.use('/api/admin/dictionaries', adminRoute)
-// app.use('/api/admin/dictionaries/:id', adminRoute)
-// app.use('/api/admin/add-dictionary', adminRoute)
+app.use('/api/admin', adminRoute)
+app.use('/api/admin/users', adminRoute)
+app.use('/api/admin/dictionaries', adminRoute)
+app.use('/api/admin/dictionaries/:id', adminRoute)
+app.use('/api/admin/add-dictionary', adminRoute)
 
 
 app.listen(process.env.PORT || 5000, () => {

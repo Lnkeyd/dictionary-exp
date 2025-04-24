@@ -9,6 +9,7 @@ import axios from "axios";
 import { Loader } from "@mantine/core";
 import AdminUsersPage from "./pages/adminUsers/adminUsers";
 import { setAuthUser } from "./store/userSlice";
+import AnalyticsPage from "./pages/analyticsPage/AnalyticsPage";
 
 const App = () => {
   axios.defaults.withCredentials = true;
@@ -50,6 +51,7 @@ const App = () => {
         <Route path="/stat" element={user ? <StatPage /> : <AuthPage />} />
         <Route path="/admin-dictionaries" element={user ? <AdminDictionariesPage /> : <AuthPage />} />
         <Route path="/admin/users" element={user ? <AdminUsersPage /> : <AuthPage />} />
+        <Route path="/admin/analytics" element={user ? <AnalyticsPage /> : <AuthPage />} />
       </Routes>
     </BrowserRouter>
   );

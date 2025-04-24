@@ -16,6 +16,7 @@ import {BsFillClipboardCheckFill} from 'react-icons/bs'
 import {IoStatsChart} from 'react-icons/io5'
 import { FaUserCircle } from "react-icons/fa";
 import { FaBookmark } from "react-icons/fa";
+import { GoGraph } from "react-icons/go";
 import { useMediaQuery } from "@mantine/hooks";
 
 
@@ -95,6 +96,18 @@ const Menu = () => {
               >
             <FaUserCircle />
             Пользователи
+          </Anchor>
+        }
+        {(user?.role === 2) &&
+              <Anchor
+              component={Link}
+              to="/admin/analytics"
+              size="sm"
+              color="gray.7"
+              sx={{ display: "block", marginBottom: "10px" }}
+              >
+            <GoGraph />
+            Аналитика
           </Anchor>
         }
       </Group>
