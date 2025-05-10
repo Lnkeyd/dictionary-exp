@@ -65,7 +65,7 @@ const AnalyticsPage = () => {
         const foundIndex = analyzedData.findIndex((t) => t.timestamp === item.timestamp)
         if (foundIndex) {
             console.log("FOUND!")
-            response.data[index] = {...item, syntagmatic_relationship: analyzedData[foundIndex].syntagmatic_relationship, paradigmatic_relationship: analyzedData[foundIndex].paradigmatic_relationship}
+            response.data[index] = {...item, syntagmatic_relationship: analyzedData[foundIndex]?.syntagmatic_relationship || [], paradigmatic_relationship: analyzedData[foundIndex]?.paradigmatic_relationship || []}
         }
       })
       setData(response.data);
@@ -285,8 +285,8 @@ const AnalyticsPage = () => {
                   <td>{item.word}</td>
                   <td>{item.reaction}</td>
                   <td>{new Date(item.timestamp).toLocaleString()}</td>
-                  <td>{item.syntagmatic_relationship}</td>
-                  <td>{item.paradigmatic_relationship}</td>
+                  <td>{item?.syntagmatic_relationship || ''}</td>
+                  <td>{item?.paradigmatic_relationship || ''}</td>
                 </tr>
               ))
             ) : (
