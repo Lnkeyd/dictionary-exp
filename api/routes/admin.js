@@ -62,6 +62,7 @@ router.get("/dictionaries", async (req, res) => {
     return res.status(500).send("Ошибка сервера");
   }
 });
+
 // Эндпоинт для получения данных с фильтрами
 router.get("/analytics", async (req, res) => {
   try {
@@ -99,6 +100,7 @@ router.get("/analytics", async (req, res) => {
       },
       {
         $project: {
+          username: 1, // Добавляем username в проекцию
           sessions: 1,
         },
       },
@@ -144,6 +146,7 @@ router.get("/analytics", async (req, res) => {
       word: user.sessions.word.charAt(0).toUpperCase() + user.sessions.word.slice(1).toLowerCase(),
       reaction: user.sessions.reaction.charAt(0).toUpperCase() + user.sessions.reaction.slice(1).toLowerCase(),
       timestamp: user.sessions.timestamp,
+      username: user.username, // Добавляем username в результат
     }));
 
     res.status(200).json(analyticsData);
@@ -152,6 +155,104 @@ router.get("/analytics", async (req, res) => {
     res.status(500).json({ message: "Ошибка при получении данных" });
   }
 });
+
+
+
+
+
+
+// // Эндпоинт для получения данных с фильтрами
+// router.get("/analytics", async (req, res) => {
+//   try {
+//     const { word, startDate, endDate } = req.query;
+
+//     // Фильтры
+//     const matchStage = {};
+//     if (word) {
+//       matchStage["sessions"] = {
+//         $elemMatch: {
+//           $elemMatch: {
+//             word: { $regex: new RegExp(`^${word}$`, "i") }, // Case-insensitive match
+//           },
+//         },
+//       };
+//     }
+//     if (startDate && endDate) {
+//       matchStage["sessions"] = {
+//         ...(matchStage["sessions"] || {}),
+//         $elemMatch: {
+//           $elemMatch: {
+//             timestamp: {
+//               $gte: new Date(startDate),
+//               $lte: new Date(endDate),
+//             },
+//           },
+//         },
+//       };
+//     }
+
+//     // Агрегация данных
+//     const users = await UserModel.aggregate([
+//       {
+//         $match: matchStage,
+//       },
+//       {
+//         $project: {
+//           sessions: 1,
+//         },
+//       },
+//       {
+//         $unwind: "$sessions", // Разворачиваем внешний массив
+//       },
+//       {
+//         $unwind: "$sessions", // Разворачиваем внутренний массив
+//       },
+//       {
+//         $addFields: {
+//           "sessions.word": {
+//             $concat: [
+//               { $toUpper: { $substrCP: ["$sessions.word", 0, 1] } },
+//               { $toLower: { $substrCP: ["$sessions.word", 1, { $strLenCP: "$sessions.word" }] } },
+//             ],
+//           },
+//           "sessions.reaction": {
+//             $concat: [
+//               { $toUpper: { $substrCP: ["$sessions.reaction", 0, 1] } },
+//               { $toLower: { $substrCP: ["$sessions.reaction", 1, { $strLenCP: "$sessions.reaction" }] } },
+//             ],
+//           },
+//         },
+//       },
+//       {
+//         $match: {
+//           ...(word ? { "sessions.word": { $regex: new RegExp(`^${word}$`, "i") } } : {}), // Case-insensitive match
+//           ...(startDate && endDate
+//             ? {
+//                 "sessions.timestamp": {
+//                   $gte: new Date(startDate),
+//                   $lte: new Date(endDate),
+//                 },
+//               }
+//             : {}),
+//         },
+//       },
+//     ]);
+
+//     // Преобразуем данные для фронтенда
+//     const analyticsData = users.map((user) => ({
+//       word: user.sessions.word.charAt(0).toUpperCase() + user.sessions.word.slice(1).toLowerCase(),
+//       reaction: user.sessions.reaction.charAt(0).toUpperCase() + user.sessions.reaction.slice(1).toLowerCase(),
+//       timestamp: user.sessions.timestamp,
+//       username: user.username,
+//     }));
+
+//     res.status(200).json(analyticsData);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Ошибка при получении данных" });
+//   }
+// });
+
 
 // routes/admin.js
 router.post("/assign-dictionary", async (req, res) => {

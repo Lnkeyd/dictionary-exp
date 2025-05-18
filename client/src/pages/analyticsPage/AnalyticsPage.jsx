@@ -48,6 +48,7 @@ const AnalyticsPage = () => {
     startDate: "",
     endDate: "",
     selectedReactions: [], // Новый фильтр для выбранных реакций
+    selectedUsers: [],
   });
   const [activeTab, setActiveTab] = useState("frequency");
 
@@ -59,6 +60,7 @@ const AnalyticsPage = () => {
           word: filters.word,
           startDate: filters.startDate ? filters.startDate.toISOString() : null,
           endDate: filters.endDate ? filters.endDate.toISOString() : null,
+          usernames: filters.selectedUsers?.length > 0 ? filters?.selectedUsers.join(",") : null,
         },
       });
       response.data.forEach((item, index) => {
@@ -75,12 +77,26 @@ const AnalyticsPage = () => {
     }
   };
 
-  // Обработка изменения фильтров
+  // // Обработка изменения фильтров
+  // const handleFilterChange = (field, value) => {
+  //   if (field === "startDate" || field === "endDate") {
+  //     const dateValue = value ? new Date(value) : null;
+  //     setFilters((prev) => ({ ...prev, [field]: dateValue }));
+  //   } else if (field === "selectedReactions") {
+  //     setFilters((prev) => ({ ...prev, [field]: value }));
+  //   } else {
+  //     setFilters((prev) => ({
+  //       ...prev,
+  //       [field]: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
+  //     }));
+  //   }
+  // };
+
   const handleFilterChange = (field, value) => {
     if (field === "startDate" || field === "endDate") {
       const dateValue = value ? new Date(value) : null;
       setFilters((prev) => ({ ...prev, [field]: dateValue }));
-    } else if (field === "selectedReactions") {
+    } else if (field === "selectedReactions" || field === "selectedUsers") {
       setFilters((prev) => ({ ...prev, [field]: value }));
     } else {
       setFilters((prev) => ({
@@ -105,9 +121,27 @@ const AnalyticsPage = () => {
   };
 
   // Фильтрация данных по выбранным реакциям
-  const filteredData = data.filter((item) =>
-    filters.selectedReactions.includes(item.reaction)
-  );
+  // const filteredData = data.filter((item) =>
+  //   filters.selectedReactions.includes(item.reaction)
+  // );
+
+  const [filteredData, setFilteredData] = useState(data.filter((item) => {
+    const matchesReaction = filters.selectedReactions.includes(item.reaction);
+    const matchesUser = filters.selectedUsers.length === 0 || filters.selectedUsers.includes(item.username);
+    return matchesReaction && matchesUser;
+  }))
+  useEffect(() => {
+    console.log("DATA", data)
+    console.log(filters)
+    console.log(filters.selectedUsers)
+    setFilteredData(data.filter((item) => {
+      // console.log(item)
+      const matchesReaction = filters.selectedReactions.length === 0 || filters.selectedReactions.includes(item.reaction);
+      const matchesUser = filters.selectedUsers.length === 0 || filters.selectedUsers.includes(item.username);
+      return matchesReaction && matchesUser;
+    }))
+    console.log(filteredData)
+  }, [data, filters, filters.selectedReactions, filters.selectedUsers])
 
   // Группировка данных для синтагматических отношений
   const syntagmaticRelations = filteredData.reduce((acc, item) => {
@@ -118,7 +152,7 @@ const AnalyticsPage = () => {
 
   // Группировка данных для парадигматических отношений
   const paradigmaticRelations = filteredData?.reduce((acc, item) => {
-    const relations = item.paradigmatic_relationship?.split(", ");
+    const relations = item?.paradigmatic_relationship?.split(", ");
     relations?.forEach((relation) => {
       if (!acc[relation]) acc[relation] = 0;
       acc[relation]++;
@@ -203,6 +237,19 @@ const AnalyticsPage = () => {
               }
             }}
           />
+          <MultiSelect
+            label="Выберите пользователей"
+            data={Array.from(new Set(data.map(item => item.username))).filter(Boolean).map(username => ({
+              value: username,
+              label: username,
+            }))}
+            value={filters.selectedUsers}
+            onChange={(value) =>
+              handleFilterChange("selectedUsers", value)
+            }
+            searchable
+            nothingFoundMessage="Пользователь не найден"
+          />
           <Button onClick={() => axios.get("/api/admin/export")}>Экспорт данных</Button>
         </Group>
 
@@ -218,18 +265,18 @@ const AnalyticsPage = () => {
           {/* Вкладка: Частота реакций */}
           <Tabs.Panel value="frequency">
             {/* Реализация частоты реакций */}
-            <FrequencyChart data={data} getFixedColor={getFixedColor}/>
+            <FrequencyChart data={filteredData} getFixedColor={getFixedColor}/>
           </Tabs.Panel>
 
           {/* Вкладка: Динамика во времени */}
           <Tabs.Panel value="timeline">
-            <TimelineChart data={data} getFixedColor={getFixedColor}/>
+            <TimelineChart data={filteredData} getFixedColor={getFixedColor}/>
           </Tabs.Panel>
 
           {/* Вкладка: Активность по временным интервалам */}
           <Tabs.Panel value="timeOfDay">
             {/* Реализация активности по временным интервалам */}
-            <TimeOfDayChart data={data} getFixedColor={getFixedColor}/>
+            <TimeOfDayChart data={filteredData} getFixedColor={getFixedColor}/>
           </Tabs.Panel>
 
           {/* Вкладка: Отношения */}
