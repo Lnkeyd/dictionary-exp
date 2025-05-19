@@ -50,6 +50,21 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    gender: {
+      type: String,
+      required: false,
+      unique: false,
+    },
+    group: {
+      type: String,
+      required: false,
+      unique: false,
+    },
+    age: {
+      type: Number,
+      required: false,
+      unique: false,
+    },
     active_dict_id: {
       type: String,
       required: false,

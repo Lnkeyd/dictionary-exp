@@ -39,7 +39,8 @@ app.use('/api/login', authRoute)
 
 app.use('/api/dict', checkAuth, dictRoute)
 
-// app.use('/api/stat', checkAuth, statRoute)
+app.use('/api/stat', checkAuth, statRoute)
+
 
 // С CREDENTIALS
 // app.use('/api/admin', checkAuth, adminRoute)

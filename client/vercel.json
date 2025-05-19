@@ -41,6 +41,22 @@
             "destination": "https://deploy-dict-exp.vercel.app/api/stat/"
         },
         {
+            "source": "/api/stat/export-stat-data-exel",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat/export-stat-data-exel"
+        },
+        {
+            "source": "/api/stat/export-stat-data-exel/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat/export-stat-data-exel/"
+        },
+        {
+            "source": "/api/stat/build-dictionaries",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat/build-dictionaries"
+        },
+        {
+            "source": "/api/stat/build-dictionaries/",
+            "destination": "https://deploy-dict-exp.vercel.app/api/stat/build-dictionaries/"
+        },
+        {
           "source": "/(.*)",
           "destination": "/"
         }

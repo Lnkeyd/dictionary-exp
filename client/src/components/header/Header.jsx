@@ -63,7 +63,7 @@ const Menu = () => {
           <BsFillClipboardCheckFill />
           Анкета
         </Anchor>
-        {/* <Anchor
+        <Anchor
           component={Link}
           to="/stat"
           size="sm"
@@ -72,7 +72,7 @@ const Menu = () => {
         >
           <IoStatsChart />
           Статистика
-        </Anchor> */}
+        </Anchor>
         {(user?.role === 2) ?
             <Anchor
             component={Link}
